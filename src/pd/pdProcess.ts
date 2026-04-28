@@ -43,6 +43,9 @@ export function launchPdProcess(options: PdProcessOptions): PdProcessHandle {
       if (child.exitCode !== null || child.signalCode !== null) {
         return;
       }
+      if (child.pid === undefined) {
+        return;
+      }
 
       await new Promise<void>((resolve) => {
         const timeout = setTimeout(() => {
