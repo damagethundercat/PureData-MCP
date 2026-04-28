@@ -1,6 +1,6 @@
 {
   "name": "pd-mcp-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
   "type": "module",
   "bin": {
@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "demo:electro": "tsx scripts/electro-loop.ts",
+    "demo:fx": "tsx scripts/electro-fx.ts",
     "demo:manual": "tsx scripts/manual-demo.ts",
     "mcp": "tsx src/index.ts",
     "test": "vitest run",

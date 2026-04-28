@@ -40,7 +40,21 @@ It contains:
 - sine kick with pitch and amplitude envelopes
 - noise hi-hat with high-pass/band-pass filtering
 - phasor bass sequence with envelope and low-pass filtering
+- live delay FX control on TCP port `19777`
 - conservative mixer, clipping, and stereo output
+
+Change the delay effect while the patch is running:
+
+```powershell
+cmd /c npm run demo:fx -- fxmix 0.18 delay 320 feedback 0.35 tone 1200
+```
+
+The Pd patch clamps live FX values:
+
+- `fxmix`: `0..0.35`
+- `delay`: `60..500` ms
+- `feedback`: `0..0.65`
+- `tone`: `300..6000` Hz
 
 ## Requirements
 
