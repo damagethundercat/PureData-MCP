@@ -8,7 +8,7 @@ describe.skipIf(!shouldRun)("Pd integration", () => {
   test("has an explicit Pd binary for opt-in integration tests", () => {
     accessSync(process.env.PD_EXE!, constants.X_OK);
 
-    expect(process.env.PD_EXE).toMatch(/pd\.(com|exe)$/i);
+    expect(process.env.PD_EXE).toMatch(/(?:pd|pd\.(?:com|exe))$/i);
   });
 
   test(

@@ -2,22 +2,23 @@ import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, type ChildProcess } from "node:child_process";
-import { findPdBinary } from "../src/pd/pdPaths.js";
+import { parseOptionalAudioOutDevice } from "../src/pd/audioConfig.js";
+import { findPdGuiBinary } from "../src/pd/pdPaths.js";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(scriptDir, "..");
 const patchPath = join(repoRoot, "patches", "electro-rhythm-loop.pd");
 
-const pdBinary = findDemoPdBinary();
+const pdBinary = findPdGuiBinary();
 if (!pdBinary) {
-  throw new Error("Could not find Pd. Set PD_EXE to the Pd binary path.");
+  throw new Error("Could not find Pd. Set PD_GUI_EXE or PD_EXE to the Pd binary path.");
 }
 
 if (!existsSync(patchPath)) {
   throw new Error(`Demo patch not found: ${patchPath}`);
 }
 
-const audioOutDevice = process.env.PD_AUDIO_OUT_DEVICE;
+const audioOutDevice = parseOptionalAudioOutDevice(process.env.PD_AUDIO_OUT_DEVICE);
 const args = [
   "-verbose",
   "-noprefs",
@@ -32,7 +33,7 @@ const args = [
   "64",
   "-outchannels",
   "2",
-  ...(audioOutDevice === undefined ? [] : ["-audiooutdev", audioOutDevice]),
+  ...(audioOutDevice === undefined ? [] : ["-audiooutdev", String(audioOutDevice)]),
   "-open",
   patchPath
 ];
@@ -51,21 +52,6 @@ console.log(`Pd PID: ${child.pid}`);
 console.log("Press Ctrl+C in this terminal to stop Pd.");
 
 setupShutdown(child);
-
-function findDemoPdBinary(): string | null {
-  if (process.env.PD_EXE) {
-    return process.env.PD_EXE;
-  }
-
-  if (process.platform === "win32") {
-    const pdExe = "C:\\Program Files\\Pd\\bin\\pd.exe";
-    if (existsSync(pdExe)) {
-      return pdExe;
-    }
-  }
-
-  return findPdBinary();
-}
 
 function setupShutdown(childProcess: ChildProcess): void {
   const stop = () => {
