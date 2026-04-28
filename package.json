@@ -1,0 +1,45 @@
+{
+  "name": "pd-mcp-server",
+  "version": "0.2.0",
+  "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
+  "type": "module",
+  "bin": {
+    "pd-mcp-server": "./dist/src/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "demo:electro": "tsx scripts/electro-loop.ts",
+    "demo:manual": "tsx scripts/manual-demo.ts",
+    "mcp": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:pd": "vitest run tests/integration/pd",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "pure-data",
+    "puredata",
+    "pd",
+    "creative-coding",
+    "generative-audio"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damagethundercat/PureData-MCP.git"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
