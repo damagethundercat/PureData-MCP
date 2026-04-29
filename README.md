@@ -64,7 +64,13 @@ The Pd patch clamps live FX values:
 - macOS: Pd is auto-discovered from `PATH`, `/Applications/Pd.app`, `/Applications/Pure Data.app`, and versioned app bundles such as `/Applications/Pd-0.56-2.app`.
 - If auto-discovery fails, set `PD_EXE` for headless MCP use or `PD_GUI_EXE` for visible GUI demos.
 
-Install and build:
+Install from npm for MCP clients:
+
+```powershell
+cmd /c npx -y @damagethundercat/puredata-mcp
+```
+
+Or clone the repository for demos and development:
 
 ```powershell
 cmd /c npm install
@@ -75,13 +81,21 @@ PowerShell may block `npm.ps1`; `cmd /c npm ...` avoids that on Windows.
 
 ## Connect To Codex
 
-Build once:
+Add this to your Codex config file:
+
+```toml
+[mcp_servers.puredata]
+command = "npx"
+args = ["-y", "@damagethundercat/puredata-mcp"]
+```
+
+Restart Codex after changing MCP config.
+
+For a local checkout instead of npm, build once and point Codex at the compiled entrypoint:
 
 ```powershell
 cmd /c npm run build
 ```
-
-Add this to your Codex config file, replacing the path with your checkout path:
 
 ```toml
 [mcp_servers.puredata]
@@ -89,9 +103,7 @@ command = "node"
 args = ["C:\\path\\to\\PureData-MCP\\dist\\src\\index.js"]
 ```
 
-Restart Codex after changing MCP config.
-
-On macOS, the same idea looks like this:
+On macOS the local checkout path usually looks like:
 
 ```toml
 [mcp_servers.puredata]
@@ -99,12 +111,7 @@ command = "node"
 args = ["/path/to/PureData-MCP/dist/src/index.js"]
 ```
 
-If your Pd binary is already on `PATH`, the `PD_EXE` entry can be omitted.
-If auto-discovery cannot find Pd, add an explicit environment entry:
-
-```toml
-env = { PD_EXE = "/Applications/Pd.app/Contents/Resources/bin/pd" }
-```
+If auto-discovery cannot find Pd, add an explicit `PD_EXE` environment entry. For visible GUI demos you can set `PD_GUI_EXE`.
 
 ## MCP Tools
 
