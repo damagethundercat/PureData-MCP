@@ -5,7 +5,7 @@
   "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
   "type": "module",
   "bin": {
-    "puredata-mcp": "./dist/src/index.js"
+    "puredata-mcp": "dist/src/index.js"
   },
   "files": [
     "dist/src",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/damagethundercat/PureData-MCP.git"
+    "url": "git+https://github.com/damagethundercat/PureData-MCP.git"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.24.0",
