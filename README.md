@@ -1,3 +1,7 @@
+<p align="right">
+  English | <a href="README.ko.md">한국어</a> | <a href="README.ja.md">日本語</a>
+</p>
+
 # PureData-MCP
 
 <p align="center">

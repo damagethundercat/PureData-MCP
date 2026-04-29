@@ -11,6 +11,8 @@
     "dist/src",
     "icon.png",
     "README.md",
+    "README.ko.md",
+    "README.ja.md",
     "LICENSE"
   ],
   "scripts": {
