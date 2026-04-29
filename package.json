@@ -1,11 +1,17 @@
 {
-  "name": "pd-mcp-server",
+  "name": "@damagethundercat/puredata-mcp",
   "version": "0.3.0",
+  "mcpName": "io.github.damagethundercat/puredata-mcp",
   "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
   "type": "module",
   "bin": {
-    "pd-mcp-server": "./dist/src/index.js"
+    "puredata-mcp": "./dist/src/index.js"
   },
+  "files": [
+    "dist/src",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "demo:electro": "tsx scripts/electro-loop.ts",
