@@ -22,7 +22,7 @@ Install [Pure Data](https://puredata.info/downloads) and Node.js 20 or newer, th
 npx -y @damagethundercat/puredata-mcp
 ```
 
-Most users do not run that command directly. Instead, add it to an MCP client such as Codex, Claude Desktop, Cursor, or VS Code.
+Most users do not run that command directly. Instead, add it to an MCP client such as Codex, Claude Code, Cursor, or VS Code.
 
 ## Connect To Codex
 

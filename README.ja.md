@@ -22,7 +22,7 @@ Pure Data、またはPd/Pd Vanillaは、Miller Pucketteによって作られ、P
 npx -y @damagethundercat/puredata-mcp
 ```
 
-多くの場合、このコマンドを直接実行するのではなく、Codex、Claude Desktop、Cursor、VS CodeなどのMCPクライアントに設定します。
+多くの場合、このコマンドを直接実行するのではなく、Codex、Claude Code、Cursor、VS CodeなどのMCPクライアントに設定します。
 
 ## Codexに接続する
 
