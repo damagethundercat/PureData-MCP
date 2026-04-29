@@ -1,6 +1,6 @@
 {
   "name": "@damagethundercat/puredata-mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "mcpName": "io.github.damagethundercat/puredata-mcp",
   "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
   "type": "module",
