@@ -4,7 +4,11 @@ import {
   emptyToolSchema,
   pdLiveAddObjectSchema,
   pdLiveConnectSchema,
+  pdLiveDisconnectSchema,
   pdLiveMoveObjectSchema,
+  pdLiveRemoveObjectSchema,
+  pdLiveReplaceGraphSchema,
+  pdLiveUpdateObjectSchema,
   pdSetParamsSchema,
   pdStartDemoSchema,
   pdStopSchema
@@ -108,6 +112,74 @@ export function registerPdTools(server: McpServer, session: PdSession): void {
     async (input) => {
       try {
         return toToolResult(await session.moveLiveObject(input));
+      } catch (error) {
+        return toolError(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    "pd_live_remove_object",
+    {
+      title: "Remove Live Pure Data Object",
+      description:
+        "Remove an agent-created live object and its incident connections, then rebuild the visible MCP live canvas.",
+      inputSchema: pdLiveRemoveObjectSchema
+    },
+    async (input) => {
+      try {
+        return toToolResult(await session.removeLiveObject(input));
+      } catch (error) {
+        return toolError(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    "pd_live_disconnect",
+    {
+      title: "Disconnect Live Pure Data Objects",
+      description:
+        "Remove an agent-created live connection by stable id, then rebuild the visible MCP live canvas.",
+      inputSchema: pdLiveDisconnectSchema
+    },
+    async (input) => {
+      try {
+        return toToolResult(await session.disconnectLiveObjects(input));
+      } catch (error) {
+        return toolError(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    "pd_live_update_object",
+    {
+      title: "Update Live Pure Data Object",
+      description:
+        "Update an agent-created live object's type, arguments, or coordinates, then rebuild the visible MCP live canvas.",
+      inputSchema: pdLiveUpdateObjectSchema
+    },
+    async (input) => {
+      try {
+        return toToolResult(await session.updateLiveObject(input));
+      } catch (error) {
+        return toolError(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    "pd_live_replace_graph",
+    {
+      title: "Replace Live Pure Data Graph",
+      description:
+        "Replace the entire agent-managed live graph with a safe precomposed graph, then render it into the visible Pd GUI canvas.",
+      inputSchema: pdLiveReplaceGraphSchema
+    },
+    async (input) => {
+      try {
+        return toToolResult(await session.replaceLiveGraph(input));
       } catch (error) {
         return toolError(error);
       }

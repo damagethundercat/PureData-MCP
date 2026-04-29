@@ -10,7 +10,7 @@ The current best demo is a visible Pure Data electronic rhythm patch: kick, hi-h
 - Generates safe Vanilla `.pd` patches.
 - Controls `frequency`, `amplitude`, and `gate` over TCP FUDI.
 - Opens Pd headless by default, or with the Pd GUI when `gui: true`.
-- Lets an agent add, connect, move, clear, and inspect safe live GUI objects.
+- Lets an agent add, connect, disconnect, move, update, remove, replace, clear, and inspect safe live GUI graphs.
 - Includes a ready-to-record electronic rhythm demo patch.
 
 ## Best Demo
@@ -21,7 +21,7 @@ Run the electronic rhythm loop:
 cmd /c npm run demo:electro
 ```
 
-On this Windows setup, USB-C headphones were output device `1`:
+By default the demo uses Pd's default audio output device. To choose a specific device, first inspect Pd's device list with `pd_list_audio_devices`, then pass the numeric device explicitly:
 
 ```powershell
 $env:PD_AUDIO_OUT_DEVICE="1"
@@ -60,8 +60,9 @@ The Pd patch clamps live FX values:
 
 - Node.js 20+
 - Pure Data Vanilla
-- Windows: tested with Pd 0.56.2 at `C:\Program Files\Pd`
-- macOS: set `PD_EXE` if Pd is not on `PATH`
+- Windows: Pd is auto-discovered from common install locations or `PATH`.
+- macOS: Pd is auto-discovered from `PATH`, `/Applications/Pd.app`, `/Applications/Pure Data.app`, and versioned app bundles such as `/Applications/Pd-0.56-2.app`.
+- If auto-discovery fails, set `PD_EXE` for headless MCP use or `PD_GUI_EXE` for visible GUI demos.
 
 Install and build:
 
@@ -80,13 +81,12 @@ Build once:
 cmd /c npm run build
 ```
 
-Add this to `C:\Users\ikidk\.codex\config.toml`:
+Add this to your Codex config file, replacing the path with your checkout path:
 
 ```toml
 [mcp_servers.puredata]
 command = "node"
-args = ["C:\\Users\\ikidk\\Documents\\New project\\dist\\src\\index.js"]
-env = { PD_EXE = "C:\\Program Files\\Pd\\bin\\pd.com" }
+args = ["C:\\path\\to\\PureData-MCP\\dist\\src\\index.js"]
 ```
 
 Restart Codex after changing MCP config.
@@ -97,10 +97,14 @@ On macOS, the same idea looks like this:
 [mcp_servers.puredata]
 command = "node"
 args = ["/path/to/PureData-MCP/dist/src/index.js"]
-env = { PD_EXE = "/Applications/Pd.app/Contents/Resources/bin/pd" }
 ```
 
 If your Pd binary is already on `PATH`, the `PD_EXE` entry can be omitted.
+If auto-discovery cannot find Pd, add an explicit environment entry:
+
+```toml
+env = { PD_EXE = "/Applications/Pd.app/Contents/Resources/bin/pd" }
+```
 
 ## MCP Tools
 
@@ -113,6 +117,10 @@ If your Pd binary is already on `PATH`, the `PD_EXE` entry can be omitted.
 - `pd_live_add_object`
 - `pd_live_connect`
 - `pd_live_move_object`
+- `pd_live_remove_object`
+- `pd_live_disconnect`
+- `pd_live_update_object`
+- `pd_live_replace_graph`
 - `pd_live_clear`
 - `pd_live_graph`
 
@@ -123,7 +131,6 @@ Start a visible GUI session:
   "patch": "basic_sine",
   "frequency": 220,
   "amplitude": 0.04,
-  "audioOutDevice": 1,
   "gui": true
 }
 ```
@@ -136,6 +143,22 @@ pd_live_add_object({ "type": "*~", "x": 120, "y": 140, "args": [0.08] })
 pd_live_add_object({ "type": "dac~", "x": 120, "y": 210 })
 pd_live_connect({ "sourceId": "obj-1", "targetId": "obj-2" })
 pd_live_connect({ "sourceId": "obj-2", "targetId": "obj-3" })
+```
+
+Replace the whole agent-owned live graph in one shot:
+
+```text
+pd_live_replace_graph({
+  "nodes": [
+    { "id": "obj-1", "type": "noise~", "x": 90, "y": 80 },
+    { "id": "obj-2", "type": "*~", "x": 90, "y": 130, "args": [0.04] },
+    { "id": "obj-3", "type": "dac~", "x": 90, "y": 190 }
+  ],
+  "connections": [
+    { "id": "conn-1", "sourceId": "obj-1", "targetId": "obj-2" },
+    { "id": "conn-2", "sourceId": "obj-2", "targetId": "obj-3" }
+  ]
+})
 ```
 
 The live editor uses a safe object palette: `osc~`, `phasor~`, `noise~`, `*~`, `+~`, `-~`, `/~`, `hip~`, `lop~`, `line~`, `dac~`, `metro`, `random`, `float`, `bng`, and `tgl`.
@@ -173,16 +196,21 @@ $env:PD_INTEGRATION="1"
 cmd /c npm run test:pd
 ```
 
+On macOS, `PD_EXE` can point to the app-bundled binary:
+
+```bash
+PD_EXE="/Applications/Pd.app/Contents/Resources/bin/pd" PD_INTEGRATION=1 npm run test:pd
+```
+
 ## Recording Notes
 
 For the current best demo, run:
 
 ```powershell
-$env:PD_AUDIO_OUT_DEVICE="1"
 cmd /c npm run demo:electro
 ```
 
-Then record the Pd window with your screen recorder. If recording on macOS, verify that your recorder captures system audio or route Pd audio into the recorder before doing the final take.
+Then record the Pd window with your screen recorder. If recording on macOS, verify that your recorder captures system audio or route Pd audio into the recorder before doing the final take. Only set `PD_AUDIO_OUT_DEVICE` after confirming the device number on that machine.
 
 ## Safety
 

@@ -1,6 +1,6 @@
 {
   "name": "pd-mcp-server",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A TypeScript MCP server for launching, controlling, and live-patching Pure Data.",
   "type": "module",
   "bin": {

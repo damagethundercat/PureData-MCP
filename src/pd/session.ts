@@ -5,8 +5,12 @@ import {
   LivePatchGraph,
   type AddLiveObjectInput,
   type ConnectLiveObjectsInput,
+  type DisconnectLiveObjectsInput,
   type LivePatchSnapshot,
-  type MoveLiveObjectInput
+  type MoveLiveObjectInput,
+  type RemoveLiveObjectInput,
+  type ReplaceLiveGraphInput,
+  type UpdateLiveObjectInput
 } from "./livePatch.js";
 import { findPdBinary } from "./pdPaths.js";
 import { launchPdProcess, type PdProcessHandle } from "./pdProcess.js";
@@ -298,6 +302,58 @@ export class PdSession {
       object: result.node,
       livePatch: this.livePatch.snapshot()
     };
+  }
+
+  async removeLiveObject(input: RemoveLiveObjectInput): Promise<{
+    object: ReturnType<LivePatchGraph["snapshot"]>["nodes"][number];
+    livePatch: LivePatchSnapshot;
+  }> {
+    await this.ensureLiveEditingReady();
+    const result = this.livePatch.removeObject(input);
+    await this.sendLiveCanvasMessages(["vis 1", ...result.messages, "dirty 1"]);
+
+    return {
+      object: result.object,
+      livePatch: this.livePatch.snapshot()
+    };
+  }
+
+  async disconnectLiveObjects(input: DisconnectLiveObjectsInput): Promise<{
+    connection: ReturnType<LivePatchGraph["snapshot"]>["connections"][number];
+    livePatch: LivePatchSnapshot;
+  }> {
+    await this.ensureLiveEditingReady();
+    const result = this.livePatch.disconnect(input);
+    await this.sendLiveCanvasMessages(["vis 1", ...result.messages, "dirty 1"]);
+
+    return {
+      connection: result.connection,
+      livePatch: this.livePatch.snapshot()
+    };
+  }
+
+  async updateLiveObject(input: UpdateLiveObjectInput): Promise<{
+    object: ReturnType<LivePatchGraph["snapshot"]>["nodes"][number];
+    livePatch: LivePatchSnapshot;
+  }> {
+    await this.ensureLiveEditingReady();
+    const result = this.livePatch.updateObject(input);
+    await this.sendLiveCanvasMessages(["vis 1", ...result.messages, "dirty 1"]);
+
+    return {
+      object: result.object,
+      livePatch: this.livePatch.snapshot()
+    };
+  }
+
+  async replaceLiveGraph(input: ReplaceLiveGraphInput): Promise<{
+    livePatch: LivePatchSnapshot;
+  }> {
+    await this.ensureLiveEditingReady();
+    const result = this.livePatch.replaceGraph(input);
+    await this.sendLiveCanvasMessages(["vis 1", ...result.messages, "dirty 1"]);
+
+    return { livePatch: result.livePatch };
   }
 
   async clearLivePatch(): Promise<{ livePatch: LivePatchSnapshot }> {

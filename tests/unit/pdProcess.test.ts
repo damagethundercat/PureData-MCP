@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process";
 import { describe, expect, test } from "vitest";
 import { buildPdArgs, launchPdProcess } from "../../src/pd/pdProcess.js";
 
@@ -49,5 +50,42 @@ describe("launchPdProcess", () => {
 
     expect(handle.child.listenerCount("error")).toBeGreaterThan(0);
     void handle.stop();
+  });
+
+  test("stop after a spawn failure does not terminate the caller", async () => {
+    const script = `
+      import { launchPdProcess } from "./src/pd/pdProcess.ts";
+
+      const handle = launchPdProcess({
+        binary: "C:\\\\\\\\definitely-missing\\\\\\\\pd.com",
+        patchPath: "C:\\\\\\\\tmp\\\\\\\\patch.pd",
+        port: 31002
+      });
+
+      if (handle.child.listenerCount("error") === 0) {
+        throw new Error("missing error listener");
+      }
+
+      await handle.stop();
+      console.log("survived");
+    `;
+    const child = spawn(process.execPath, ["--import", "tsx", "--eval", script], {
+      cwd: process.cwd(),
+      detached: true
+    });
+
+    let stdout = "";
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+
+    const result = await new Promise<{ code: number | null; signal: NodeJS.Signals | null }>(
+      (resolve) => {
+        child.once("exit", (code, signal) => resolve({ code, signal }));
+      }
+    );
+
+    expect(result).toEqual({ code: 0, signal: null });
+    expect(stdout).toContain("survived");
   });
 });

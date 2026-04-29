@@ -1,11 +1,9 @@
 import { setTimeout as delay } from "node:timers/promises";
+import { parseOptionalAudioOutDevice } from "../src/pd/audioConfig.js";
 import { PdSession } from "../src/pd/session.js";
 
 const durationMs = Number(process.env.PD_DEMO_DURATION_MS ?? 12_000);
-const audioOutDevice =
-  process.env.PD_AUDIO_OUT_DEVICE === undefined
-    ? undefined
-    : Number(process.env.PD_AUDIO_OUT_DEVICE);
+const audioOutDevice = parseOptionalAudioOutDevice(process.env.PD_AUDIO_OUT_DEVICE);
 
 const session = new PdSession();
 

@@ -3,7 +3,11 @@ import {
   PARAMETER_LIMITS,
   pdLiveAddObjectSchema,
   pdLiveConnectSchema,
+  pdLiveDisconnectSchema,
   pdLiveMoveObjectSchema,
+  pdLiveRemoveObjectSchema,
+  pdLiveReplaceGraphSchema,
+  pdLiveUpdateObjectSchema,
   pdSetParamsSchema,
   pdStartDemoSchema
 } from "../../src/mcp/schemas.js";
@@ -102,6 +106,50 @@ describe("MCP tool schemas", () => {
       id: "obj-1",
       x: 300,
       y: 140
+    });
+  });
+
+  test("accepts full graph editing schemas", () => {
+    expect(pdLiveRemoveObjectSchema.parse({ id: "obj-1" })).toEqual({ id: "obj-1" });
+    expect(pdLiveDisconnectSchema.parse({ id: "conn-1" })).toEqual({ id: "conn-1" });
+    expect(
+      pdLiveUpdateObjectSchema.parse({
+        id: "obj-1",
+        type: "phasor~",
+        x: 240,
+        y: 100,
+        args: [110]
+      })
+    ).toEqual({
+      id: "obj-1",
+      type: "phasor~",
+      x: 240,
+      y: 100,
+      args: [110]
+    });
+
+    expect(
+      pdLiveReplaceGraphSchema.parse({
+        nodes: [
+          { id: "obj-1", type: "noise~", x: 90, y: 80 },
+          { id: "obj-2", type: "*~", x: 90, y: 130, args: [0.04] },
+          { id: "obj-3", type: "dac~", x: 90, y: 190 }
+        ],
+        connections: [
+          { id: "conn-1", sourceId: "obj-1", targetId: "obj-2" },
+          { id: "conn-2", sourceId: "obj-2", targetId: "obj-3" }
+        ]
+      })
+    ).toMatchObject({
+      nodes: [
+        { id: "obj-1", type: "noise~" },
+        { id: "obj-2", type: "*~" },
+        { id: "obj-3", type: "dac~" }
+      ],
+      connections: [
+        { id: "conn-1", outlet: 0, inlet: 0 },
+        { id: "conn-2", outlet: 0, inlet: 0 }
+      ]
     });
   });
 });

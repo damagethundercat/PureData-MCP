@@ -78,6 +78,59 @@ export const pdLiveMoveObjectSchema = z.object({
   y: canvasCoordinateSchema
 });
 
+export const liveConnectionIdSchema = z.string().regex(/^conn-\d+$/);
+
+export const pdLiveRemoveObjectSchema = z.object({
+  id: liveObjectIdSchema
+});
+
+export const pdLiveDisconnectSchema = z.object({
+  id: liveConnectionIdSchema
+});
+
+export const pdLiveUpdateObjectSchema = z
+  .object({
+    id: liveObjectIdSchema,
+    type: liveObjectTypeSchema.optional(),
+    x: canvasCoordinateSchema.optional(),
+    y: canvasCoordinateSchema.optional(),
+    args: z.array(z.number().finite()).max(4).optional()
+  })
+  .refine(
+    (value) =>
+      value.type !== undefined ||
+      value.x !== undefined ||
+      value.y !== undefined ||
+      value.args !== undefined,
+    "At least one object update is required"
+  );
+
+export const pdLiveReplaceGraphSchema = z.object({
+  nodes: z
+    .array(
+      z.object({
+        id: liveObjectIdSchema.optional(),
+        type: liveObjectTypeSchema,
+        x: canvasCoordinateSchema,
+        y: canvasCoordinateSchema,
+        args: z.array(z.number().finite()).max(4).optional()
+      })
+    )
+    .max(128),
+  connections: z
+    .array(
+      z.object({
+        id: liveConnectionIdSchema.optional(),
+        sourceId: liveObjectIdSchema,
+        outlet: portIndexSchema.default(0),
+        targetId: liveObjectIdSchema,
+        inlet: portIndexSchema.default(0)
+      })
+    )
+    .max(256)
+    .default([])
+});
+
 export type PatchName = z.infer<typeof patchNameSchema>;
 export type PdStartDemoInput = z.infer<typeof pdStartDemoSchema>;
 export type PdSetParamsInput = z.infer<typeof pdSetParamsSchema>;
@@ -85,6 +138,10 @@ export type PdStopInput = z.infer<typeof pdStopSchema>;
 export type PdLiveAddObjectInput = z.infer<typeof pdLiveAddObjectSchema>;
 export type PdLiveConnectInput = z.infer<typeof pdLiveConnectSchema>;
 export type PdLiveMoveObjectInput = z.infer<typeof pdLiveMoveObjectSchema>;
+export type PdLiveRemoveObjectInput = z.infer<typeof pdLiveRemoveObjectSchema>;
+export type PdLiveDisconnectInput = z.infer<typeof pdLiveDisconnectSchema>;
+export type PdLiveUpdateObjectInput = z.infer<typeof pdLiveUpdateObjectSchema>;
+export type PdLiveReplaceGraphInput = z.infer<typeof pdLiveReplaceGraphSchema>;
 
 export const parameterSchemaResource = {
   frequency: {
@@ -107,5 +164,19 @@ export const parameterSchemaResource = {
   liveObjects: {
     type: "safe-palette",
     values: LIVE_OBJECT_TYPES
+  },
+  liveGraphOperations: {
+    type: "agent-owned-graph",
+    values: [
+      "add_object",
+      "connect",
+      "move_object",
+      "remove_object",
+      "disconnect",
+      "update_object",
+      "replace_graph",
+      "clear",
+      "inspect"
+    ]
   }
 } as const;
