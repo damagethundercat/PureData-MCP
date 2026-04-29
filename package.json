@@ -9,6 +9,7 @@
   },
   "files": [
     "dist/src",
+    "icon.png",
     "README.md",
     "LICENSE"
   ],

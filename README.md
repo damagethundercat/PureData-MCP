@@ -1,5 +1,9 @@
 # PureData-MCP
 
+<p align="center">
+  <img src="icon.png" width="160" alt="PureData-MCP icon">
+</p>
+
 Control and live-patch [Pure Data](https://puredata.info/) from AI agents via the Model Context Protocol.
 
 PureData-MCP lets an MCP client start Pd, open visible GUI patches, generate Vanilla `.pd` patches, and edit objects and connections while a patch is running. The goal is simple: ask for sound in natural language, watch Pd become the instrument.
